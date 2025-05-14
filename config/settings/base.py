@@ -17,7 +17,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'api'
+    'api',
+    'app',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -28,6 +30,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.LoginRequiredMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'

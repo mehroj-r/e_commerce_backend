@@ -13,3 +13,5 @@ pycparser==2.22
 PyJWT==2.9.0
 sqlparse==0.5.3
 python-dotenv~=1.1.0
+requests~=2.32.3
+jsonrpcclient~=4.0.3
