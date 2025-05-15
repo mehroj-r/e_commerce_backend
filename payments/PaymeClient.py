@@ -35,7 +35,7 @@ class PaymeClient:
             response (dict): The response from the rpc call.
         """
 
-        # Geneerate RPC payload
+        # Generate RPC payload
         rpc_data = request(method, params or {})
 
         # Headers to be included
@@ -51,14 +51,40 @@ class PaymeClient:
                 self.base_url,
                 headers=headers,
                 json=rpc_data
-            ).json()
+            )
 
-            # Raise exception if 'error' occurs
-            if response.status_code != 200 or "error" in response:
-                raise Exception(f"Error: {response["error"]["message"]["en"]}")
+            # Check HTTP status code first
+            response.raise_for_status()
 
-            # Return the reponse
-            return response["result"]
+            # Parse JSON response
+            response_data = response.json()
+
+            # Check for error in the response
+            if "error" in response_data:
+                error_msg = "Unknown error"
+                if isinstance(response_data["error"], dict):
+                    # Try to extract the error message based on Payme API format
+                    if "message" in response_data["error"]:
+                        if isinstance(response_data["error"]["message"], dict) and "en" in response_data["error"][
+                            "message"]:
+                            error_msg = response_data["error"]["message"]["en"]
+                        else:
+                            error_msg = str(response_data["error"]["message"])
+                    elif "data" in response_data["error"]:
+                        error_msg = str(response_data["error"]["data"])
+                    else:
+                        error_msg = str(response_data["error"])
+                else:
+                    error_msg = str(response_data["error"])
+
+                raise Exception(f"API Error: {error_msg}")
+
+            # Ensure result exists in the response
+            if "result" not in response_data:
+                raise Exception("Invalid API response: missing 'result'")
+
+            # Return the response
+            return response_data["result"]
 
         except requests.exceptions.RequestException as e:
             raise Exception(f"RPC request failed: {str(e)}")
@@ -68,8 +94,8 @@ class PaymeClient:
         Checks if transaction can be performed.
 
         Args:
-            amount (int): The amount to be checked.
-            account (dict): The account to check.
+            amount (int): The amount to be checked (in tiyins/kopecks).
+            account (dict): The account to check (format depends on merchant requirements).
 
         Returns:
             response (dict): The response from the rpc call.
@@ -95,10 +121,10 @@ class PaymeClient:
         Creates a transaction.
 
         Args:
-            id (str): The id of the transaction.
-            time (int): The creation time of the transaction.
-            amount (int): The amount of the transaction.
-            account (dict): The account to create the transaction.
+            id (str): The id of the transaction (must be unique).
+            time (int): The creation time of the transaction (milliseconds since epoch).
+            amount (int): The amount of the transaction (in tiyins/kopecks).
+            account (dict): The account to create the transaction for.
 
         Returns:
             response (dict): The response from the rpc call.
@@ -126,7 +152,7 @@ class PaymeClient:
         Performs a transaction.
 
         Args:
-            id (str): The id of the transaction.
+            id (str): The id of the transaction to perform.
         Returns:
             response (dict): The response from the rpc call.
         """
@@ -150,8 +176,8 @@ class PaymeClient:
         Cancels a transaction.
 
         Args:
-            id (str): The id of the transaction.
-            reason (int): The reason for the transaction.
+            id (str): The id of the transaction to cancel.
+            reason (int): The reason code for cancellation.
         Returns:
             response (dict): The response from the rpc call.
         """
@@ -173,10 +199,10 @@ class PaymeClient:
 
     def checkTransaction(self, id):
         """
-        Checks the transaction.
+        Checks the status of a transaction.
 
         Args:
-            id (str): The id of the transaction.
+            id (str): The id of the transaction to check.
         Returns:
             response (dict): The response from the rpc call.
         """
@@ -194,5 +220,3 @@ class PaymeClient:
         )
 
         return response
-
-
