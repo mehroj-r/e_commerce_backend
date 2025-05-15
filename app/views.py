@@ -1,3 +1,10 @@
-from django.shortcuts import render
+from django.http import HttpResponse
 
-# Create your views here.
+def cancel_payment(request):
+    """
+    Payment cancel page when payment is canceled.
+    """
+
+    payment_id = request.GET.get('payment_id')
+
+    return HttpResponse(f"You payment was cancelled. Payment id: {payment_id}")

@@ -68,6 +68,7 @@ class Payment(models.Model):
         PAID = 'PAID', 'Paid'
         FAILED = 'FAILED', 'Failed'
         CANCELED = 'CANCELED', 'Canceled'
+        REFUNDED = 'REFUNDED', 'Refunded'
 
     class PaymentProvider(models.TextChoices):
         PAYME = 'PAYME', 'Payme'

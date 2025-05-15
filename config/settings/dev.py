@@ -60,6 +60,3 @@ SIMPLE_JWT = {
 PAYME_MERCHANT_ID = os.getenv("MERCHANT_ID")
 PAYME_SECRET_KEY = os.getenv("SECRET_KEY")
 PAYME_CHECKOUT_URL = 'https://test.paycom.uz'
-
-# Callback URL (used for notifications from Payme)
-PAYME_CALLBACK_URL = 'https://my-test-domain.com/payments/payme-callback/'

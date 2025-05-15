@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -84,7 +85,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -95,3 +96,5 @@ REST_FRAMEWORK = {
     )
 
 }
+
+BASE_URL = os.getenv("BASE_URL")
